@@ -1,0 +1,69 @@
+<%= form_with(model: post, local: true) do |form| %>
+  <% if post.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(post.errors.count, "error") %> prohibited this post from being saved:</h2>
+
+      <ul>
+      <% post.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :title %>
+    <%= form.text_field :title %>
+  </div>
+
+  <div class="field">
+    <%= form.select('province', options_from_collection_for_select(@provinces, 'id', 'name', @province_id), include_blank: "无")%>
+    <%= form.select('city', options_from_collection_for_select(@cities, 'id', 'name', @city_id), include_blank: true)%>
+    <%= form.select('area', options_from_collection_for_select(@areas, 'id', 'name', @area_id), include_blank: true)%>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>
+
+<script>
+  document.getElementById('post_province').addEventListener("change", function(){
+    document.getElementById('post_city').innerHTML = '';
+    document.getElementById('post_area').innerHTML = '';
+    Rails.ajax({
+      url: '/posts/province_changes/getcities',
+      type: "get",
+      dataType: 'json',
+      // 传给服务器：省的id
+      data: 'post[province]=' + this.value,
+      success: function(data) {
+        // 给city选择框赋值, 传入的data是一个Array，可以使用方法forEach
+        data['cities'].forEach(function(city) {
+          var o = document.createElement('option');
+          o.text = city['name'];
+          o.value = city['id'];
+          document.getElementById('post_city').options.add(o);
+        });
+      }
+    })
+  })
+
+  document.getElementById('post_city').addEventListener('change', function(){
+    document.getElementById('post_area').innerHTML = '';
+    Rails.ajax({
+      url: '/posts/province_changes/getareas',
+      type: 'get',
+      dataType: 'json',
+      data: 'post[city]=' + this.value,
+      success: function(data) {
+        data['areas'].forEach(function(area) {
+          var o = document.createElement('option');
+          o.text = area['name'];
+          o.value = area['id'];
+          document.getElementById('post_area').options.add(o);
+        })
+      }
+    })
+  })
+</script>

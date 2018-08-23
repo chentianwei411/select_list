@@ -10,7 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_20_125551) do
+ActiveRecord::Schema.define(version: 2018_08_23_080939) do
+
+  create_table "areas", force: :cascade do |t|
+    t.string "name"
+    t.integer "city_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "cities", force: :cascade do |t|
+    t.string "name"
+    t.integer "province_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "course_students", force: :cascade do |t|
     t.integer "course_id"
@@ -22,6 +36,21 @@ ActiveRecord::Schema.define(version: 2018_08_20_125551) do
   create_table "courses", force: :cascade do |t|
     t.string "name"
     t.integer "teacher_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "posts", force: :cascade do |t|
+    t.string "title"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "province"
+    t.string "city"
+    t.string "area"
+  end
+
+  create_table "provinces", force: :cascade do |t|
+    t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
