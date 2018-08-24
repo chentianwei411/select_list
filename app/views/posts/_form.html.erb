@@ -17,9 +17,9 @@
   </div>
 
   <div class="field">
-    <%= form.select('province', options_from_collection_for_select(@provinces, 'id', 'name', @province_id), include_blank: "无")%>
-    <%= form.select('city', options_from_collection_for_select(@cities, 'id', 'name', @city_id), include_blank: true)%>
-    <%= form.select('area', options_from_collection_for_select(@areas, 'id', 'name', @area_id), include_blank: true)%>
+    <%= form.select('province', options_from_collection_for_select(@provinces, 'id', 'name', @province_id))%>
+    <%= form.select('city', options_from_collection_for_select(@cities, 'id', 'name', @city_id))%>
+    <%= form.select('area', options_from_collection_for_select(@areas, 'id', 'name', @area_id))%>
   </div>
 
   <div class="actions">
@@ -29,15 +29,19 @@
 
 <script>
   document.getElementById('post_province').addEventListener("change", function(){
+    // 当省的select变化时，后面的2个select的DOM结构清空。
     document.getElementById('post_city').innerHTML = '';
     document.getElementById('post_area').innerHTML = '';
+    // 发送请求，接收响应
     Rails.ajax({
       url: '/posts/province_changes/getcities',
       type: "get",
       dataType: 'json',
       // 传给服务器：省的id
       data: 'post[province]=' + this.value,
+
       success: function(data) {
+        console.log(data);
         // 给city选择框赋值, 传入的data是一个Array，可以使用方法forEach
         data['cities'].forEach(function(city) {
           var o = document.createElement('option');
